@@ -1,0 +1,51 @@
+name: Generate Packages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'openapi.json'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Generate Types
+        run: yarn generate:types
+
+      - name: Generate Client
+        run: yarn generate:client
+
+      - name: Build Packages
+        run: yarn build
+
+      - name: Publish Types Package
+        run: cd packages/types && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish Client Package
+        run: cd packages/client && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add .
+          git commit -m 'chore: update generated packages'
+          git push

@@ -1,0 +1,32 @@
+{
+  "name": "near-jsonrpc-sdk",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "generate": "yarn generate:types  && yarn generate:client && yarn generate:tests",
+    "generate:types": "tsx scripts/generate-types.ts",
+    "generate:client": "tsx scripts/generate-client.ts",
+    "generate:tests": "tsx scripts/generate-tests.ts",
+    "clean": "tsx scripts/clean.ts",
+    "test": "cd packages/client && vitest run tests/changes.test.ts",
+    "build": "yarn workspaces run build",
+    "publish": "yarn workspaces run publish"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "openapi-typescript": "^7.8.0",
+    "openapi-zod-client": "^1.18.3",
+    "openapi3-ts": "^4.4.0",
+    "prettier": "^3.5.3",
+    "ts-morph": "^26.0.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "zod": "^3.22.4"
+  },
+  "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
+}

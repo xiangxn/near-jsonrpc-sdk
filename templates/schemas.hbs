@@ -1,0 +1,9 @@
+import { z } from "zod";
+import * as T from "./types";
+
+{{#each schemas}}
+{{#if (filterPrefix @key)}}
+export const {{clearPrefix @key}}{{#if (or (lookup ../emittedType @key) (isComplex this))}}: z.ZodType<T.{{clearPrefix @key}}>{{/if}} = {{{this}}} {{#if (or (lookup ../emittedType @key) (isComplex this))}}as z.ZodType<T.{{clearPrefix @key}}>{{/if}};
+{{/if}}
+
+{{/each}}

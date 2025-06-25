@@ -1,0 +1,76 @@
+import { z } from 'zod';
+import { types, schemas }  from '@near-js/jsonrpc-types';
+
+type JsonRpcRequest = {
+  jsonrpc: '2.0';
+  id: string | number;
+  method: string;
+  params: any;
+};
+
+type JsonRpcResponse<T> = {
+  jsonrpc: '2.0';
+  id: string | number;
+  result?: T;
+  error?: { code: number; message: string; data?: any };
+};
+
+function fixParams(method: string, params: any) {
+  if (method === "gas_price") {
+    return Object.values(params as Object)
+  }
+  return params
+}
+
+export class NearJsonRpcClient {
+  private baseUrl: string;
+
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  private async request<T, U>(
+    method: string,
+    params: U,
+    inputSchema?: z.ZodType<U>,
+    outputSchema?: z.ZodType<T>
+  ): Promise<T> {
+    const id = Date.now();
+    const validatedParams = inputSchema ? inputSchema.parse(params) : params;
+    const payload: JsonRpcRequest = {
+      jsonrpc: '2.0',
+      id,
+      method,
+      params: fixParams(method, validatedParams)
+    };
+
+    console.debug("payload:", payload)
+
+    const response = await fetch(this.baseUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const data: JsonRpcResponse<T> = await response.json();
+
+    if (data.error) {
+      throw new Error(`JSON-RPC error: ${data.error.message}`);
+    }
+
+    if (!data.result) {
+      throw new Error('No result in JSON-RPC response');
+    }
+
+    return outputSchema ? outputSchema.parse({result:data.result}) : data.result;
+  }
+{ClientMethods}
+}
+
+export function createApiClient(baseUrl: string) {
+  return new NearJsonRpcClient(baseUrl);
+}

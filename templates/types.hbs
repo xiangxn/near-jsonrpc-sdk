@@ -1,0 +1,7 @@
+{{#each types}}
+{{#if (filterPrefix @key)}}
+{{{description @key}}}
+export {{{fixDesc this}}};
+
+{{/if}}
+{{/each}}
