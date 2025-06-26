@@ -11,7 +11,7 @@
     "publish": "npm publish --access public"
   },
   "dependencies": {
-    "@near/types": "1.0.0",
+    "@near-js/jsonrpc-types": "*",
     "zod": "^3.22.4"
   },
   "devDependencies": {

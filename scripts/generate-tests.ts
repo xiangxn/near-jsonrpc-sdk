@@ -30,7 +30,7 @@ methods.forEach(method => {
     const testCode = `
 import { describe, it, expect } from 'vitest';
 import { createApiClient } from '../src/client';
-import { schemas } from '@near/types';
+import { schemas } from '@near-js/jsonrpc-types';
 import { generateMock } from '@anatine/zod-mock';
 import { generateMockSmart } from './mock';
 
